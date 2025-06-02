@@ -1,0 +1,7 @@
+targets:
+  $default:
+    builders:
+      proxy_server:
+        options:
+          proxies:
+            /api: http://localhost:8080/api
