@@ -49,3 +49,27 @@ app.*.map.json
 **/generated_plugin_registrant.*
 **/generated_plugins.cmake
 **/GeneratedPluginRegistrant.*
+
+# VS Code settings (recomendado ignorar)
+.vscode/
+
+# Flutter builds adicionais
+**/build/
+build/
+
+# Flutter multiplataforma (macOS, Linux, Windows)
+macos/Flutter/ephemeral/
+windows/flutter/ephemeral/
+linux/flutter/ephemeral/
+
+# Web build
+web/manifest.json
+
+# Arquivos temporários de testes e cobertura
+coverage/
+
+# Arquivos de lock temporários
+pubspec.lock
+
+# Arquivos de SO e editores
+*.swo
