@@ -62,16 +62,19 @@ Cada persona guiou o design de funcionalidades específicas da interface.
 ```bash
 git clone https://github.com/seu-usuario/guarda-grana-frontend.git
 cd guarda-grana-frontend
+```
 
 ### 3. Instalar dependências
 
 ```bash
 flutter pub get
+```
 
 ### 4. Rodar o projeto 
 
 ```bash
 flutter run -d chrome --web-port=8000
+```
 
 Você pode escolher o emulador ou dispositivo ao iniciar.
 
@@ -81,5 +84,6 @@ A aplicação consome uma API RESTful (em desenvolvimento separado). Certifique-
 
 ```bash
 http://localhost:8080/api/
+```
 
 Configure a baseURL da API no arquivo responsável pelas requisições (ex: api_service.dart).
