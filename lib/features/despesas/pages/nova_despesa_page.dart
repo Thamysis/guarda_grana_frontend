@@ -16,17 +16,20 @@ class _NovaDespesaPageState extends State<NovaDespesaPage> {
   final valorController = TextEditingController();
   final dataController = TextEditingController();
   final categoriaController = TextEditingController();
+  final formaPagamentoController = TextEditingController();
 
   final api = ApiService();
 
   void _salvar() async {
     if (_formKey.currentState!.validate()) {
       final despesa = DespesaModel(
+        id:0,
         nome: nomeController.text,
         descricao: descricaoController.text,
         valor: double.tryParse(valorController.text) ?? 0,
         data: dataController.text,
         categoria: categoriaController.text,
+        formaPagamento: formaPagamentoController.text,
       );
 
       await api.criarDespesa(despesa);
@@ -44,11 +47,36 @@ class _NovaDespesaPageState extends State<NovaDespesaPage> {
           key: _formKey,
           child: ListView(
             children: [
-              TextFormField(controller: nomeController, decoration: const InputDecoration(labelText: 'Nome'), validator: (v) => v!.isEmpty ? 'Campo obrigatório' : null),
-              TextFormField(controller: descricaoController, decoration: const InputDecoration(labelText: 'Descrição')),
-              TextFormField(controller: valorController, decoration: const InputDecoration(labelText: 'Valor'), keyboardType: TextInputType.number),
-              TextFormField(controller: dataController, decoration: const InputDecoration(labelText: 'Data (AAAA-MM-DD)')),
-              TextFormField(controller: categoriaController, decoration: const InputDecoration(labelText: 'Categoria')),
+              TextFormField(
+                controller: nomeController,
+                decoration: const InputDecoration(labelText: 'Nome'),
+                validator: (v) => v == null || v.isEmpty ? 'Campo obrigatório' : null,
+              ),
+              TextFormField(
+                controller: descricaoController,
+                decoration: const InputDecoration(labelText: 'Descrição'),
+              ),
+              TextFormField(
+                controller: valorController,
+                decoration: const InputDecoration(labelText: 'Valor'),
+                keyboardType: TextInputType.number,
+                validator: (v) => v == null || v.isEmpty ? 'Campo obrigatório' : null,
+              ),
+              TextFormField(
+                controller: dataController,
+                decoration: const InputDecoration(labelText: 'Data (AAAA-MM-DD)'),
+                validator: (v) => v == null || v.isEmpty ? 'Campo obrigatório' : null,
+              ),
+              TextFormField(
+                controller: categoriaController,
+                decoration: const InputDecoration(labelText: 'Categoria'),
+                validator: (v) => v == null || v.isEmpty ? 'Campo obrigatório' : null,
+              ),
+              TextFormField(
+                controller: formaPagamentoController,
+                decoration: const InputDecoration(labelText: 'Forma de Pagamento'),
+                validator: (v) => v == null || v.isEmpty ? 'Campo obrigatório' : null,
+              ),
               const SizedBox(height: 16),
               ElevatedButton(onPressed: _salvar, child: const Text('Salvar')),
             ],

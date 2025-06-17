@@ -1,9 +1,37 @@
 import 'package:flutter/material.dart';
-import 'app.dart';
+import 'features/dashboard/pages/dashboard_page.dart';
 
 void main() {
   runApp(const GuardaGranaApp());
 }
+
+class GuardaGranaApp extends StatelessWidget {
+  const GuardaGranaApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Guarda Grana',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        // Seu tema aqui
+        primarySwatch: Colors.blue,
+      ),
+      home: const DashboardPage(), // <- troque aqui para sua página inicial
+    );
+  }
+}
+
+
+
+
+// import 'package:flutter/material.dart';
+// import 'package:guarda_grana_frontend/features/dashboard/pages/dashboard_page.dart';
+// //import 'app.dart';
+
+// void main() {
+//   runApp(const DashboardPage());
+// }
 
 
 /*
