@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guarda_grana_frontend/core/theme/app_colors.dart';
 import '../controllers/dashboard_controller.dart';
 
 class RegistroListTile extends StatelessWidget {
@@ -25,10 +26,10 @@ class RegistroListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: CircleAvatar(
-        backgroundColor: Colors.grey.shade200,
+        backgroundColor: registro.isReceita ? AppColors.bgGreen: AppColors.bgRed,
         child: Icon(
           registro.isReceita ? Icons.arrow_downward : Icons.arrow_upward,
-          color: registro.isReceita ? Colors.green : Colors.red,
+          color: registro.isReceita ? AppColors.green: AppColors.red,
         ),
       ),
       title: Text(registro.nome),
@@ -36,7 +37,7 @@ class RegistroListTile extends StatelessWidget {
       trailing: Text(
         '${registro.valor >= 0 ? '+' : '-'}R\$ ${registro.valor.abs().toStringAsFixed(2)}',
         style: TextStyle(
-          color: registro.valor >= 0 ? Colors.green : Colors.red,
+          color: registro.valor >= 0 ? AppColors.green: AppColors.red,
           fontWeight: FontWeight.bold,
         ),
       ),
