@@ -5,13 +5,29 @@ import '../widgets/registro_list_tile.dart';
 import '../../../core/theme/app_colors.dart'; // ajuste o caminho conforme onde colocou
 
 
-class DashboardPage extends StatelessWidget {
+class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
 
   @override
+  State<DashboardPage> createState() => _DashboardPageState();
+}
+
+class _DashboardPageState extends State<DashboardPage> {
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    if (index == 2) {
+      Navigator.pushNamed(context, '/despesas'); // Rota da listagem
+    }
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    
-    
+
+
     return ChangeNotifierProvider(
       create: (_) => DashboardController()..fetchUsuario(),
       child: Consumer<DashboardController>(
@@ -144,6 +160,10 @@ class DashboardPage extends StatelessWidget {
               ],
             ),
             bottomNavigationBar: BottomNavigationBar(
+              currentIndex: _selectedIndex,
+              onTap: _onItemTapped,
+              selectedItemColor: AppColors.primary,
+              unselectedItemColor: Colors.grey,
               items: const [
                 BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Início'),
                 BottomNavigationBarItem(icon: Icon(Icons.account_balance), label: 'Contas'),

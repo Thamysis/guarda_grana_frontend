@@ -31,6 +31,26 @@ class ApiService {
     }
   }
 
+  Future<void> editarDespesa(DespesaModel despesa) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl/despesas/${despesa.id}'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(despesa.toJson()),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Erro ao editar despesa');
+    }
+  }
+
+  Future<void> deletarDespesa(int id) async {
+    final response = await http.delete(Uri.parse('$baseUrl/despesas/$id'));
+  
+    if (response.statusCode != 200) {
+      throw Exception('Erro ao deletar despesa');
+    }
+  }
+
   // NOVO: Buscar usuário por ID (com despesas, receitas, contas, etc)
   Future<UsuarioModel> fetchUsuario(int id) async {
     final response = await http.get(Uri.parse('$baseUrl/usuarios/$id'));

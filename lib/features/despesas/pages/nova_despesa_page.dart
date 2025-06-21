@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../../../../data/models/despesa_model.dart';
 import '../../../../data/services/api_service.dart';
 
@@ -15,21 +16,60 @@ class _NovaDespesaPageState extends State<NovaDespesaPage> {
   final descricaoController = TextEditingController();
   final valorController = TextEditingController();
   final dataController = TextEditingController();
-  final categoriaController = TextEditingController();
-  final formaPagamentoController = TextEditingController();
+
+  String? categoriaSelecionada;
+  String? formaPagamentoSelecionada;
 
   final api = ApiService();
 
+  // Mapas para combo boxes
+  final Map<String, String> categorias = {
+    'Alimentação': 'ALIMENTACAO',
+    'Moradia': 'MORADIA',
+    'Transporte': 'TRANSPORTE',
+    'Lazer': 'LAZER',
+    'Saúde': 'SAUDE',
+    'Educação': 'EDUCACAO',
+  };
+
+  final Map<String, String> formasPagamento = {
+    'Dinheiro': 'DINHEIRO',
+    'Cartão de crédito': 'CARTAO_CREDITO',
+    'Cartão de débito': 'CARTAO_DEBITO',
+    'Pix': 'PIX',
+    'Transferência bancária': 'TRANSFERENCIA_BANCARIA',
+    'Boleto': 'BOLETO',
+  };
+
+  Future<void> _selecionarData(BuildContext context) async {
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+
+    if (picked != null) {
+      setState(() {
+        dataController.text = DateFormat('dd/MM/yyyy').format(picked);
+      });
+    }
+  }
+
   void _salvar() async {
     if (_formKey.currentState!.validate()) {
+      final dataFormatada = DateFormat('yyyy-MM-dd').format(
+        DateFormat('dd/MM/yyyy').parse(dataController.text),
+      );
+
       final despesa = DespesaModel(
-        id:0,
+        id: 0,
         nome: nomeController.text,
         descricao: descricaoController.text,
         valor: double.tryParse(valorController.text) ?? 0,
-        data: dataController.text,
-        categoria: categoriaController.text,
-        formaPagamento: formaPagamentoController.text,
+        data: dataFormatada,
+        categoria: categorias[categoriaSelecionada] ?? '',
+        formaPagamento: formasPagamento[formaPagamentoSelecionada] ?? '',
       );
 
       await api.criarDespesa(despesa);
@@ -62,20 +102,47 @@ class _NovaDespesaPageState extends State<NovaDespesaPage> {
                 keyboardType: TextInputType.number,
                 validator: (v) => v == null || v.isEmpty ? 'Campo obrigatório' : null,
               ),
-              TextFormField(
-                controller: dataController,
-                decoration: const InputDecoration(labelText: 'Data (AAAA-MM-DD)'),
-                validator: (v) => v == null || v.isEmpty ? 'Campo obrigatório' : null,
+              GestureDetector(
+                onTap: () => _selecionarData(context),
+                child: AbsorbPointer(
+                  child: TextFormField(
+                    controller: dataController,
+                    decoration: const InputDecoration(labelText: 'Data (dd/mm/aaaa)'),
+                    validator: (v) => v == null || v.isEmpty ? 'Campo obrigatório' : null,
+                  ),
+                ),
               ),
-              TextFormField(
-                controller: categoriaController,
+              DropdownButtonFormField<String>(
+                value: categoriaSelecionada,
                 decoration: const InputDecoration(labelText: 'Categoria'),
-                validator: (v) => v == null || v.isEmpty ? 'Campo obrigatório' : null,
+                items: categorias.keys
+                    .map((label) => DropdownMenuItem(
+                          value: label,
+                          child: Text(label),
+                        ))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    categoriaSelecionada = value;
+                  });
+                },
+                validator: (v) => v == null ? 'Campo obrigatório' : null,
               ),
-              TextFormField(
-                controller: formaPagamentoController,
+              DropdownButtonFormField<String>(
+                value: formaPagamentoSelecionada,
                 decoration: const InputDecoration(labelText: 'Forma de Pagamento'),
-                validator: (v) => v == null || v.isEmpty ? 'Campo obrigatório' : null,
+                items: formasPagamento.keys
+                    .map((label) => DropdownMenuItem(
+                          value: label,
+                          child: Text(label),
+                        ))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    formaPagamentoSelecionada = value;
+                  });
+                },
+                validator: (v) => v == null ? 'Campo obrigatório' : null,
               ),
               const SizedBox(height: 16),
               ElevatedButton(onPressed: _salvar, child: const Text('Salvar')),

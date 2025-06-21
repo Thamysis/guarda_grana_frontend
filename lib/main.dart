@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'features/dashboard/pages/dashboard_page.dart';
+import 'features/despesas/pages/list_despesas_page.dart';
+import 'features/despesas/pages/nova_despesa_page.dart';
 
 void main() {
   runApp(const GuardaGranaApp());
@@ -13,11 +15,12 @@ class GuardaGranaApp extends StatelessWidget {
     return MaterialApp(
       title: 'Guarda Grana',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        // Seu tema aqui
-        primarySwatch: Colors.blue,
-      ),
-      home: const DashboardPage(), // <- troque aqui para sua página inicial
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: const DashboardPage(),
+      routes: {
+        '/despesas': (context) => const ListDespesasPage(),
+        '/despesas/nova': (context) => const NovaDespesaPage(),
+      },
     );
   }
 }
@@ -38,7 +41,7 @@ class GuardaGranaApp extends StatelessWidget {
 import 'package:flutter/material.dart';
 
 
-void main() {
+void main() {There is no tracking information for the current branch.
   runApp(const MyApp());
 }
 
@@ -46,9 +49,7 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
+  // This widget is the root of your application.There is no tracking information for the current branch.
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -157,6 +158,8 @@ class _MyHomePageState extends State<MyHomePage> {
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
-  }
+  }errors.dart:266 Uncaught (in promise) DartError: Could not find a generator for route RouteSettings("/despesas/editar", Instance of 'DespesaModel') in the _WidgetsAppState.
+Make sure your root app widget has provided a way to generate
+this route.
 }
 */
