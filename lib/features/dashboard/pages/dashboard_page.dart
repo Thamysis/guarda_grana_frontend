@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../controllers/dashboard_controller.dart';
 import '../widgets/registro_list_tile.dart';
-import '../../../core/theme/app_colors.dart'; // ajuste o caminho conforme onde colocou
-
+import '../../relatorios/widgets/btn_relatorios.dart';
+import '../../relatorios/widgets/btn_metas.dart';
+import '../../../core/theme/app_colors.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -17,9 +18,9 @@ class _DashboardPageState extends State<DashboardPage> {
 
   void _onItemTapped(int index) {
     if (index == 2) {
-      Navigator.pushNamed(context, '/despesas'); // Rota da listagem
+      Navigator.pushNamed(context, '/despesas');
     } else if (index == 3) {
-      Navigator.pushNamed(context, '/receitas'); // rota da listagem de receitas
+      Navigator.pushNamed(context, '/receitas');
     }
     setState(() {
       _selectedIndex = index;
@@ -28,8 +29,6 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-
-
     return ChangeNotifierProvider(
       create: (_) => DashboardController()..fetchUsuario(),
       child: Consumer<DashboardController>(
@@ -50,14 +49,17 @@ class _DashboardPageState extends State<DashboardPage> {
           final saldo = usuario.saldoAtual ?? usuario.saldoInicial;
           final saldoStr = saldo.toStringAsFixed(2).replaceAll('.', ',');
           final partes = saldoStr.split(',');
-          final saldoInteiro = partes[0]; // ex: "14,235"
-          final saldoDecimal = partes[1]; // ex: "34"
+          final saldoInteiro = partes[0];
+          final saldoDecimal = partes[1];
 
           return Scaffold(
             appBar: AppBar(
               title: Text('Olá, ${usuario.nome}!'),
               actions: [
-                IconButton(icon: const Icon(Icons.settings), onPressed: () {/* Metas */}),
+                IconButton(
+                  icon: const Icon(Icons.settings),
+                  onPressed: () {/* Metas */},
+                ),
               ],
               elevation: 0,
               backgroundColor: AppColors.primary,
@@ -66,79 +68,104 @@ class _DashboardPageState extends State<DashboardPage> {
             body: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // ÁREA AZUL (PRINCIPAL) QUE ENVOLVE ROXO + BOTÃO
                 Container(
                   width: MediaQuery.of(context).size.width,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary, // Fundo mais claro
-                    //borderRadius: BorderRadius.circular(24),
-                    
-                  ),
-                  child: Container(
-                    margin: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: AppColors.accent, // Fundo mais escuro (ex: roxo escuro)
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 20),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'Saldo da Conta',
-                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                  color: Colors.white70,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                          ),
-                          const SizedBox(height: 10),
-                          FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: RichText(
-                              text: TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: 'R\$ ',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 30,
+                  color: AppColors.primary,
+                  child: Column(
+                    children: [
+                      // CONTAINER ROXO DO SALDO
+                      Container(
+                        margin: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: AppColors.accent,
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 20),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'Saldo da Conta',
+                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                       color: Colors.white70,
+                                      fontWeight: FontWeight.w400,
                                     ),
-                                  ),
-                                  TextSpan(
-                                    text: saldoInteiro, // parte inteira, ex: "14,235"
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 44,
-                                      color: Colors.white70,
-                                    ),
-                                  ),
-                                  TextSpan(
-                                    text: ',${saldoDecimal}', // parte decimal, ex: "34"
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 26,
-                                      color: Colors.white70,
-                                    ),
-                                  ),
-                                ],
                               ),
-                            ),
+                              const SizedBox(height: 10),
+                              FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: RichText(
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: 'R\$ ',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 30,
+                                          color: Colors.white70,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: saldoInteiro,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 44,
+                                          color: Colors.white70,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: ',${saldoDecimal}',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 26,
+                                          color: Colors.white70,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
-                    ),
+                      // BOTÃO QUADRADO LOGO ABAIXO DO SALDO E DENTRO DA ÁREA AZUL
+                      Padding(
+                        padding: const EdgeInsets.only(left: 20, right: 20, bottom: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            BtnRelatorios(
+                              onTap: () {
+                                Navigator.pushNamed(context, '/relatorios/anual');
+                              },
+                              icon: Icons.bar_chart,
+                              texto: 'Relatórios',
+                            ),
+                            BtnMetas(
+                              onTap: () {
+                                // navegação para a página de Metas
+                                // Navigator.pushNamed(context, '/metas');
+                              },
+                              icon: Icons.flag,
+                              texto: 'Metas',
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-
-                const SizedBox(height: 28),
+                const SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('Últimos registros', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+                      const Text('Últimos registros',
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
                       TextButton(
                         onPressed: () {
                           // navegar para todos registros
