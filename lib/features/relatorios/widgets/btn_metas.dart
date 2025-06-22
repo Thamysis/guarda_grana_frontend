@@ -19,7 +19,7 @@ class BtnMetas extends StatelessWidget {
       child: Container(
         width: 100,
         height: 100,
-        margin: const EdgeInsets.only(left: 12), // margem do lado esquerdo para separar do outro botão
+        margin: const EdgeInsets.only(left: 12),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),

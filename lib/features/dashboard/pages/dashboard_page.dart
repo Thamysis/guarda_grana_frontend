@@ -4,6 +4,7 @@ import '../controllers/dashboard_controller.dart';
 import '../widgets/registro_list_tile.dart';
 import '../../relatorios/widgets/btn_relatorios.dart';
 import '../../relatorios/widgets/btn_metas.dart';
+import '../../relatorios/pages/relatorio_anual_page.dart';
 import '../../../core/theme/app_colors.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -131,7 +132,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           ),
                         ),
                       ),
-                      // BOTÃO QUADRADO LOGO ABAIXO DO SALDO E DENTRO DA ÁREA AZUL
+                      // botão de relatórios e botão de metas
                       Padding(
                         padding: const EdgeInsets.only(left: 20, right: 20, bottom: 8),
                         child: Row(
@@ -139,7 +140,17 @@ class _DashboardPageState extends State<DashboardPage> {
                           children: [
                             BtnRelatorios(
                               onTap: () {
-                                Navigator.pushNamed(context, '/relatorios/anual');
+                                // Pegue as despesas/receitas de onde você carrega (Provider, Controller, etc)
+                                final usuario = context.read<DashboardController>().usuario!;
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => RelatorioAnualPage(
+                                      despesas: usuario.despesas,
+                                      receitas: usuario.receitas,
+                                    ),
+                                  ),
+                                );
                               },
                               icon: Icons.bar_chart,
                               texto: 'Relatórios',

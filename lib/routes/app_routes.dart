@@ -34,7 +34,5 @@ class AppRoutes {
       final receita = ModalRoute.of(context)!.settings.arguments as ReceitaModel;
       return EditarReceitaPage(receita: receita);
     },
-
-    '/relatorios/anual': (context) => const RelatorioAnualPage(),
   };
 }
