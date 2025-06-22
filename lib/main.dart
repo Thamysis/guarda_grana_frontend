@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'routes/app_routes.dart';
 import 'features/dashboard/pages/dashboard_page.dart';
-import 'features/despesas/pages/list_despesas_page.dart';
-import 'features/despesas/pages/nova_despesa_page.dart';
 
 void main() {
   runApp(const GuardaGranaApp());
@@ -17,10 +16,7 @@ class GuardaGranaApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
       home: const DashboardPage(),
-      routes: {
-        '/despesas': (context) => const ListDespesasPage(),
-        '/despesas/nova': (context) => const NovaDespesaPage(),
-      },
+      routes: AppRoutes.routes,
     );
   }
 }

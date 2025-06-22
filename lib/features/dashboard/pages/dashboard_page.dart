@@ -18,6 +18,8 @@ class _DashboardPageState extends State<DashboardPage> {
   void _onItemTapped(int index) {
     if (index == 2) {
       Navigator.pushNamed(context, '/despesas'); // Rota da listagem
+    } else if (index == 3) {
+      Navigator.pushNamed(context, '/receitas'); // rota da listagem de receitas
     }
     setState(() {
       _selectedIndex = index;

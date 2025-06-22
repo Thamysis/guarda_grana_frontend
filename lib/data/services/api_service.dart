@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/despesa_model.dart';
+import '../models/receita_model.dart';
 import '../models/usuario_model.dart'; // importe o novo model
 
 class ApiService {
@@ -50,6 +51,56 @@ class ApiService {
       throw Exception('Erro ao deletar despesa');
     }
   }
+
+
+  // Buscar todas as receitas (caso precise em outra tela)
+  Future<List<ReceitaModel>> getReceitas() async {
+    final response = await http.get(Uri.parse('$baseUrl/receitas'));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
+      return data.map((json) => ReceitaModel.fromJson(json)).toList();
+    } else {
+      throw Exception('Erro ao carregar receitas');
+    }
+  }
+
+
+  // Criar receita
+  Future<void> criarReceita(ReceitaModel receita) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/receitas'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(receita.toJson()),
+    );
+
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception('Erro ao criar receita');
+    }
+  }
+
+  // Editar receita
+  Future<void> editarReceita(ReceitaModel receita) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl/receitas/${receita.id}'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(receita.toJson()),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Erro ao editar receita');
+    }
+  }
+
+  // Deletar receita
+  Future<void> deletarReceita(int id) async {
+    final response = await http.delete(Uri.parse('$baseUrl/receitas/$id'));
+  
+    if (response.statusCode != 200) {
+      throw Exception('Erro ao deletar receita');
+    }
+  }
+
 
   // NOVO: Buscar usuário por ID (com despesas, receitas, contas, etc)
   Future<UsuarioModel> fetchUsuario(int id) async {

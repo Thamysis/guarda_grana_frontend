@@ -2,17 +2,18 @@ class ReceitaModel {
   final int id;
   final String nome;
   final String descricao;
+  final String categoria;
   final double valor;
   final String data;
-  final String categoria;
+
 
   ReceitaModel({
     required this.id,
     required this.nome,
     required this.descricao,
+    required this.categoria,
     required this.valor,
     required this.data,
-    required this.categoria,
   });
 
   factory ReceitaModel.fromJson(Map<String, dynamic> json) {
@@ -24,5 +25,15 @@ class ReceitaModel {
       data: json['data'] as String,
       categoria: json['categoria'] as String,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'nome': nome,
+      'descricao': descricao,
+      'categoria': categoria,
+      'valor': valor,
+      'data': data,
+    };
   }
 }

@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../../../data/models/despesa_model.dart';
+import '../../../../data/models/receita_model.dart';
 import '../../../../data/services/api_service.dart';
 
-class EditarDespesaPage extends StatefulWidget {
-  final DespesaModel despesa;
+class EditarReceitaPage extends StatefulWidget {
+  final ReceitaModel receita;
 
-  const EditarDespesaPage({super.key, required this.despesa});
+  const EditarReceitaPage({super.key, required this.receita});
 
   @override
-  State<EditarDespesaPage> createState() => _EditarDespesaPageState();
+  State<EditarReceitaPage> createState() => _EditarReceitaPageState();
 }
 
-class _EditarDespesaPageState extends State<EditarDespesaPage> {
+class _EditarReceitaPageState extends State<EditarReceitaPage> {
   final _formKey = GlobalKey<FormState>();
   final nomeController = TextEditingController();
   final descricaoController = TextEditingController();
@@ -25,42 +25,28 @@ class _EditarDespesaPageState extends State<EditarDespesaPage> {
   final api = ApiService();
 
   final Map<String, String> categorias = {
-    'Alimentação': 'ALIMENTACAO',
-    'Moradia': 'MORADIA',
-    'Transporte': 'TRANSPORTE',
-    'Lazer': 'LAZER',
-    'Saúde': 'SAUDE',
-    'Educação': 'EDUCACAO',
-  };
-
-  final Map<String, String> formasPagamento = {
-    'Dinheiro': 'DINHEIRO',
-    'Cartão de crédito': 'CARTAO_CREDITO',
-    'Cartão de débito': 'CARTAO_DEBITO',
-    'Pix': 'PIX',
-    'Transferência bancária': 'TRANSFERENCIA_BANCARIA',
-    'Boleto': 'BOLETO',
+    'Salário': 'SALARIO',
+    'Rendimentos': 'RENDIMENTOS',
+    'Investimentos': 'INVESTIMENTOS',
+    'Vendas': 'VENDAS',
+    'Reembolsos': 'REEMBOLSOS',
+    'Outros': 'OUTROS',
   };
 
   @override
   void initState() {
     super.initState();
 
-    nomeController.text = widget.despesa.nome;
-    descricaoController.text = widget.despesa.descricao;
-    valorController.text = widget.despesa.valor.toStringAsFixed(2);
+    nomeController.text = widget.receita.nome;
+    descricaoController.text = widget.receita.descricao;
+    valorController.text = widget.receita.valor.toStringAsFixed(2);
 
     // Converte data para dd/MM/yyyy
     dataController.text = DateFormat('dd/MM/yyyy')
-        .format(DateTime.parse(widget.despesa.data));
+        .format(DateTime.parse(widget.receita.data));
 
     categoriaSelecionada = categorias.entries
-        .firstWhere((e) => e.value == widget.despesa.categoria,
-            orElse: () => const MapEntry('', ''))
-        .key;
-
-    formaPagamentoSelecionada = formasPagamento.entries
-        .firstWhere((e) => e.value == widget.despesa.formaPagamento,
+        .firstWhere((e) => e.value == widget.receita.categoria,
             orElse: () => const MapEntry('', ''))
         .key;
   }
@@ -68,7 +54,7 @@ class _EditarDespesaPageState extends State<EditarDespesaPage> {
   Future<void> _selecionarData(BuildContext context) async {
     DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.tryParse(widget.despesa.data) ?? DateTime.now(),
+      initialDate: DateTime.tryParse(widget.receita.data) ?? DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
     );
@@ -86,18 +72,17 @@ class _EditarDespesaPageState extends State<EditarDespesaPage> {
         DateFormat('dd/MM/yyyy').parse(dataController.text),
       );
 
-      final despesaEditada = DespesaModel(
-        id: widget.despesa.id,
+      final receitaEditada = ReceitaModel(
+        id: widget.receita.id,
         nome: nomeController.text,
         descricao: descricaoController.text,
         valor: double.tryParse(valorController.text) ?? 0,
         data: dataFormatada,
         categoria: categorias[categoriaSelecionada] ?? '',
-        formaPagamento: formasPagamento[formaPagamentoSelecionada] ?? '',
-        // usuarioId: widget.despesa.usuarioId,
+        // usuarioId: widget.receita.usuarioId,
       );
 
-      await api.editarDespesa(despesaEditada); // <-- backend deve ter PUT /despesas/:id
+      await api.editarReceita(receitaEditada); // <-- backend deve ter PUT /receitas/:id
       if (context.mounted) Navigator.pop(context);
     }
   }
@@ -105,7 +90,7 @@ class _EditarDespesaPageState extends State<EditarDespesaPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Editar Despesa')),
+      appBar: AppBar(title: const Text('Editar Receita')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -150,22 +135,6 @@ class _EditarDespesaPageState extends State<EditarDespesaPage> {
                 onChanged: (value) {
                   setState(() {
                     categoriaSelecionada = value;
-                  });
-                },
-                validator: (v) => v == null ? 'Campo obrigatório' : null,
-              ),
-              DropdownButtonFormField<String>(
-                value: formaPagamentoSelecionada,
-                decoration: const InputDecoration(labelText: 'Forma de Pagamento'),
-                items: formasPagamento.keys
-                    .map((label) => DropdownMenuItem(
-                          value: label,
-                          child: Text(label),
-                        ))
-                    .toList(),
-                onChanged: (value) {
-                  setState(() {
-                    formaPagamentoSelecionada = value;
                   });
                 },
                 validator: (v) => v == null ? 'Campo obrigatório' : null,
