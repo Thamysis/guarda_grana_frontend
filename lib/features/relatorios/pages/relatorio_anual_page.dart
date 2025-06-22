@@ -1,10 +1,11 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../data/models/despesa_model.dart';
 import '../../../data/models/receita_model.dart';
+import 'relatorio_mensal_page.dart';
+import 'relatorio_categoria_page.dart';
 
-class RelatorioAnualPage extends StatelessWidget {
+class RelatorioAnualPage extends StatefulWidget {
   final List<DespesaModel> despesas;
   final List<ReceitaModel> receitas;
 
@@ -14,39 +15,57 @@ class RelatorioAnualPage extends StatelessWidget {
     required this.receitas,
   });
 
-  Map<int, double> agruparPorMes(List<dynamic> lista) {
+  @override
+  State<RelatorioAnualPage> createState() => _RelatorioAnualPageState();
+}
+
+class _RelatorioAnualPageState extends State<RelatorioAnualPage> {
+  late int anoSelecionado;
+
+  @override
+  void initState() {
+    super.initState();
+    anoSelecionado = DateTime.now().year;
+  }
+
+  Map<int, double> agruparPorMes(List<dynamic> lista, int ano) {
     final Map<int, double> somaPorMes = {};
     for (var item in lista) {
-      final mes = DateTime.parse(item.data).month;
-      somaPorMes[mes] = (somaPorMes[mes] ?? 0) + item.valor;
+      final data = DateTime.parse(item.data);
+      if (data.year == ano) {
+        final mes = data.month;
+        somaPorMes[mes] = (somaPorMes[mes] ?? 0) + item.valor;
+      }
     }
     return somaPorMes;
   }
 
-  // Garante que todos os meses de 1 a 12 existam no mapa (preenche zeros onde não houver valor)
-  Map<int, double> preencherMeses(Map<int, double> dados) {
-    final novo = <int, double>{};
-    for (var m = 1; m <= 12; m++) {
-      novo[m] = dados[m] ?? 0.0;
-    }
-    return novo;
-  }
-
   @override
   Widget build(BuildContext context) {
-    final receitasPorMes = agruparPorMes(receitas);
-    final despesasPorMes = agruparPorMes(despesas);
+    // Anos possíveis (de 5 anos atrás até 2 anos à frente)
+    final anosDisponiveis = List<int>.generate(8, (i) => DateTime.now().year - 5 + i);
 
-    final receitasMes = preencherMeses(receitasPorMes);
-    final despesasMes = preencherMeses(despesasPorMes);
+    final receitasPorMes = agruparPorMes(widget.receitas, anoSelecionado);
+    final despesasPorMes = agruparPorMes(widget.despesas, anoSelecionado);
 
-    // Cálculo do limite do gráfico (eixo Y)
-    final valores = [
+    // Garante que todos os meses estejam presentes com valor 0 se não houver dados
+    Map<int, double> fillMeses(Map<int, double> original) {
+      final result = <int, double>{};
+      for (int i = 1; i <= 12; i++) {
+        result[i] = original[i] ?? 0.0;
+      }
+      return result;
+    }
+
+    final receitasMes = fillMeses(receitasPorMes);
+    final despesasMes = fillMeses(despesasPorMes);
+
+    final maxY = [
       ...receitasMes.values,
-      ...despesasMes.values,
-    ];
-    final double minY = 0;
-    final double maxY = valores.isNotEmpty ? (valores.reduce(max) * 1.2) : 1000;
+      ...despesasMes.values
+    ].fold<double>(0, (prev, el) => el > prev ? el : prev) * 1.1; // 10% acima do máximo
+
+    final minY = 0.0;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Relatório Anual')),
@@ -54,30 +73,45 @@ class RelatorioAnualPage extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // Título e totais
+            // Seletor de ano
+            Row(
+              children: [
+                const Text('Ano:', style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(width: 8),
+                DropdownButton<int>(
+                  value: anoSelecionado,
+                  items: anosDisponiveis
+                      .map((ano) => DropdownMenuItem(
+                            value: ano,
+                            child: Text(ano.toString()),
+                          ))
+                      .toList(),
+                  onChanged: (novoAno) {
+                    setState(() {
+                      anoSelecionado = novoAno!;
+                    });
+                  },
+                ),
+              ],
+            ),
+            // Totais
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Column(
                   children: [
+                    Text('Receitas', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
                     Text(
-                      'Receitas',
-                      style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      'R\$ ${receitasMes.values.fold(0.0, (a, b) => a + b).toStringAsFixed(2)}',
+                      'R\$ ${receitasPorMes.values.fold(0.0, (a, b) => a + b).toStringAsFixed(2)}',
                       style: TextStyle(color: Colors.green, fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
                 Column(
                   children: [
+                    Text('Despesas', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
                     Text(
-                      'Despesas',
-                      style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      '-R\$ ${despesasMes.values.fold(0.0, (a, b) => a + b).toStringAsFixed(2)}',
+                      '-R\$ ${despesasPorMes.values.fold(0.0, (a, b) => a + b).toStringAsFixed(2)}',
                       style: TextStyle(color: Colors.red, fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                   ],
@@ -85,15 +119,15 @@ class RelatorioAnualPage extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 20),
-            // Gráfico de linhas
+            // Gráfico de linhas receitas/despesas
             SizedBox(
-              height: 220,
+              height: 200,
               child: LineChart(
                 LineChartData(
                   minX: 1,
                   maxX: 12,
                   minY: minY,
-                  maxY: maxY,
+                  maxY: maxY == 0 ? 10 : maxY,
                   gridData: FlGridData(show: false),
                   borderData: FlBorderData(
                     show: true,
@@ -124,10 +158,10 @@ class RelatorioAnualPage extends StatelessWidget {
                       sideTitles: SideTitles(
                         showTitles: true,
                         reservedSize: 40,
-                        interval: maxY / 4,
+                        interval: maxY == 0 ? 2 : (maxY / 4),
                         getTitlesWidget: (value, meta) {
                           return Text(
-                            value.toInt().toString(),
+                            value.toStringAsFixed(0),
                             style: TextStyle(fontSize: 12),
                           );
                         },
@@ -153,12 +187,61 @@ class RelatorioAnualPage extends StatelessWidget {
                         },
                       ),
                     ),
-                    rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                    topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    rightTitles: AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    topTitles: AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
                   ),
                 ),
               ),
             ),
+            const Spacer(),
+            // --- Botões ---
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => RelatorioMensalPage(
+                        despesas: widget.despesas,
+                        receitas: widget.receitas,
+                        mes: DateTime.now().month,
+                        ano: anoSelecionado,
+                      ),
+                    ),
+                  );
+                },
+                child: const Text('Relatório Mensal'),
+              ),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => RelatorioPorCategoriaPage(
+                        despesas: widget.despesas,
+                        mes: DateTime.now().month,
+                        ano: anoSelecionado,
+                      ),
+                    ),
+                  );
+                },
+                child: const Text('Gastos por Categoria'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepPurple,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
           ],
         ),
       ),
