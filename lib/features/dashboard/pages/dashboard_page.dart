@@ -18,15 +18,29 @@ class _DashboardPageState extends State<DashboardPage> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
-    if (index == 2) {
+    if (index == 0){
+      Navigator.pushNamed(context, '/');
+    }
+    if (index == 1) {
       Navigator.pushNamed(context, '/despesas');
-    } else if (index == 3) {
+    } else if (index == 2) {
       Navigator.pushNamed(context, '/receitas');
     }
     setState(() {
       _selectedIndex = index;
     });
   }
+
+  // void _onItemTapped(int index) {
+  //   if (index == 2) {
+  //     Navigator.pushNamed(context, '/despesas');
+  //   } else if (index == 3) {
+  //     Navigator.pushNamed(context, '/receitas');
+  //   }
+  //   setState(() {
+  //     _selectedIndex = index;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -206,7 +220,7 @@ class _DashboardPageState extends State<DashboardPage> {
               unselectedItemColor: Colors.grey,
               items: const [
                 BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Início'),
-                BottomNavigationBarItem(icon: Icon(Icons.account_balance), label: 'Contas'),
+                //BottomNavigationBarItem(icon: Icon(Icons.account_balance), label: 'Contas'),
                 BottomNavigationBarItem(icon: Icon(Icons.trending_down), label: 'Despesas'),
                 BottomNavigationBarItem(icon: Icon(Icons.trending_up), label: 'Receitas'),
               ],

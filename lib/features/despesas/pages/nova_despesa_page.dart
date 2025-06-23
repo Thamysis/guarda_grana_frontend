@@ -57,25 +57,27 @@ class _NovaDespesaPageState extends State<NovaDespesaPage> {
   }
 
   void _salvar() async {
-    if (_formKey.currentState!.validate()) {
-      final dataFormatada = DateFormat('yyyy-MM-dd').format(
-        DateFormat('dd/MM/yyyy').parse(dataController.text),
-      );
+  if (_formKey.currentState!.validate()) {
+    final dataFormatada = DateFormat('yyyy-MM-dd').format(
+      DateFormat('dd/MM/yyyy').parse(dataController.text),
+    );
 
-      final despesa = DespesaModel(
-        id: 0,
-        nome: nomeController.text,
-        descricao: descricaoController.text,
-        valor: double.tryParse(valorController.text) ?? 0,
-        data: dataFormatada,
-        categoria: categorias[categoriaSelecionada] ?? '',
-        formaPagamento: formasPagamento[formaPagamentoSelecionada] ?? '',
-      );
+    final despesa = DespesaModel(
+      id: 0,
+      nome: nomeController.text,
+      descricao: descricaoController.text,
+      valor: double.tryParse(valorController.text) ?? 0,
+      data: dataFormatada,
+      categoria: categorias[categoriaSelecionada] ?? '',
+      formaPagamento: formasPagamento[formaPagamentoSelecionada] ?? '',
+      usuario: { 'id': 1 },
+    );
 
-      await api.criarDespesa(despesa);
-      if (context.mounted) Navigator.pop(context);
-    }
+    await api.criarDespesa(despesa);
+    if (context.mounted) Navigator.pop(context);
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

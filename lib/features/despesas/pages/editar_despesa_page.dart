@@ -94,6 +94,7 @@ class _EditarDespesaPageState extends State<EditarDespesaPage> {
         data: dataFormatada,
         categoria: categorias[categoriaSelecionada] ?? '',
         formaPagamento: formasPagamento[formaPagamentoSelecionada] ?? '',
+        usuario: { 'id': 1 }, 
         // usuarioId: widget.despesa.usuarioId,
       );
 
