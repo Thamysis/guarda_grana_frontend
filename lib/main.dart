@@ -15,7 +15,8 @@ class GuardaGranaApp extends StatelessWidget {
       title: 'Guarda Grana',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: const DashboardPage(),
+      // home: const DashboardPage(),
+      initialRoute: AppRoutes.login,
       routes: AppRoutes.routes,
     );
   }

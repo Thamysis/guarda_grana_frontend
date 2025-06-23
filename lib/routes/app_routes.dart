@@ -8,6 +8,9 @@ import '../features/receitas/pages/editar_receita_page.dart';
 import '../data/models/despesa_model.dart';
 import '../data/models/receita_model.dart';
 import '../features/relatorios/pages/relatorio_anual_page.dart';
+import '../features/auth/pages/login_page.dart';
+import '../features/auth/pages/register_page.dart';
+import '../features/dashboard/pages/dashboard_page.dart';
 
 class AppRoutes {
   static const despesas = '/despesas';
@@ -20,7 +23,16 @@ class AppRoutes {
 
   static const relatorioAnual = '/relatorios/anual';
 
+  static const login = '/login';
+  static const register = '/register';
+  static const dashboard = '/dashboard';
+
   static Map<String, WidgetBuilder> routes = {
+    login: (_) => const LoginPage(),
+    register: (_) => const RegisterPage(),
+
+    dashboard: (_) => const DashboardPage(),
+
     despesas: (_) => const ListDespesasPage(),
     nova_despesa: (_) => const NovaDespesaPage(),
     editar_despesa: (context) {

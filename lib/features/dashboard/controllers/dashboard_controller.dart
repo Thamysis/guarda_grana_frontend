@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../data/models/usuario_model.dart';
 import '../../../data/services/api_service.dart';
 
-// Classe para uso interno no dashboard: um registro genérico
 class RegistroFinanceiro {
   final String nome;
   final String descricao;
@@ -29,7 +29,11 @@ class DashboardController extends ChangeNotifier {
     loading = true;
     notifyListeners();
     try {
-      usuario = await ApiService().fetchUsuario(1); // Troque o ID se necessário
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getInt('usuario_id');
+      if (userId == null) throw Exception('ID do usuário não encontrado');
+
+      usuario = await ApiService().fetchUsuario(userId);
       _gerarUltimosRegistros();
       error = null;
     } catch (e) {
@@ -46,7 +50,7 @@ class DashboardController extends ChangeNotifier {
         .map((e) => RegistroFinanceiro(
               nome: e.nome,
               descricao: e.descricao,
-              valor: -e.valor, // Negativo para saída
+              valor: -e.valor,
               data: e.data,
               isReceita: false,
             ));
@@ -61,9 +65,8 @@ class DashboardController extends ChangeNotifier {
 
     final todos = [...despesas, ...receitas];
 
-    todos.sort((a, b) => b.data.compareTo(a.data)); // Mais recente primeiro
+    todos.sort((a, b) => b.data.compareTo(a.data));
 
     ultimosRegistros = todos.take(10).toList();
   }
-  
 }

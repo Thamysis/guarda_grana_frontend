@@ -1,15 +1,23 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/despesa_model.dart';
 import '../models/receita_model.dart';
-import '../models/usuario_model.dart'; // importe o novo model
+import '../models/usuario_model.dart';
 
 class ApiService {
   static const String baseUrl = 'http://localhost:8080/api';
 
-  // EXISTENTE: Buscar todas as despesas (caso precise em outra tela)
+  // Buscar todas as despesas
   Future<List<DespesaModel>> getDespesas() async {
-    final response = await http.get(Uri.parse('$baseUrl/despesas'));
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('auth_token');
+    final response = await http.get(
+      Uri.parse('$baseUrl/despesas'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
 
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
@@ -19,11 +27,16 @@ class ApiService {
     }
   }
 
-  // EXISTENTE: Criar despesa
+  // Criar despesa
   Future<void> criarDespesa(DespesaModel despesa) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('auth_token');
     final response = await http.post(
       Uri.parse('$baseUrl/despesas'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
       body: jsonEncode(despesa.toJson()),
     );
 
@@ -33,9 +46,14 @@ class ApiService {
   }
 
   Future<void> editarDespesa(DespesaModel despesa) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('auth_token');
     final response = await http.put(
       Uri.parse('$baseUrl/despesas/${despesa.id}'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
       body: jsonEncode(despesa.toJson()),
     );
 
@@ -45,17 +63,30 @@ class ApiService {
   }
 
   Future<void> deletarDespesa(int id) async {
-    final response = await http.delete(Uri.parse('$baseUrl/despesas/$id'));
-  
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('auth_token');
+    final response = await http.delete(
+      Uri.parse('$baseUrl/despesas/$id'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
     if (response.statusCode != 200) {
       throw Exception('Erro ao deletar despesa');
     }
   }
 
-
-  // Buscar todas as receitas (caso precise em outra tela)
+  // Buscar todas as receitas
   Future<List<ReceitaModel>> getReceitas() async {
-    final response = await http.get(Uri.parse('$baseUrl/receitas'));
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('auth_token');
+    final response = await http.get(
+      Uri.parse('$baseUrl/receitas'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
 
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
@@ -65,12 +96,16 @@ class ApiService {
     }
   }
 
-
   // Criar receita
   Future<void> criarReceita(ReceitaModel receita) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('auth_token');
     final response = await http.post(
       Uri.parse('$baseUrl/receitas'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
       body: jsonEncode(receita.toJson()),
     );
 
@@ -81,9 +116,14 @@ class ApiService {
 
   // Editar receita
   Future<void> editarReceita(ReceitaModel receita) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('auth_token');
     final response = await http.put(
       Uri.parse('$baseUrl/receitas/${receita.id}'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
       body: jsonEncode(receita.toJson()),
     );
 
@@ -94,23 +134,38 @@ class ApiService {
 
   // Deletar receita
   Future<void> deletarReceita(int id) async {
-    final response = await http.delete(Uri.parse('$baseUrl/receitas/$id'));
-  
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('auth_token');
+    final response = await http.delete(
+      Uri.parse('$baseUrl/receitas/$id'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
     if (response.statusCode != 200) {
       throw Exception('Erro ao deletar receita');
     }
   }
 
-
-  // NOVO: Buscar usuário por ID (com despesas, receitas, contas, etc)
+  // Buscar usuário por ID (com despesas, receitas, contas, etc)
   Future<UsuarioModel> fetchUsuario(int id) async {
-    final response = await http.get(Uri.parse('$baseUrl/usuarios/$id'));
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('auth_token');
+    if (token == null) throw Exception('Usuário não logado');
 
-    print('Body (utf8): ${utf8.decode(response.bodyBytes)}');
-    
+    final response = await http.get(
+      Uri.parse('$baseUrl/usuarios/$id'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    print('Status: ${response.statusCode}');
+    print('Body: ${response.body}');
+
     if (response.statusCode == 200) {
-      return UsuarioModel.fromJson(jsonDecode(utf8.decode(response.bodyBytes))
-);
+      return UsuarioModel.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
     } else {
       throw Exception('Erro ao buscar usuário');
     }
