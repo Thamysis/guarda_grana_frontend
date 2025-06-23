@@ -14,6 +14,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _nomeController = TextEditingController();
   final _emailController = TextEditingController();
   final _senhaController = TextEditingController();
+  final _saldoInicialController = TextEditingController();
   bool _loading = false;
   String? _error;
 
@@ -30,6 +31,7 @@ class _RegisterPageState extends State<RegisterPage> {
           'nome': _nomeController.text,
           'email': _emailController.text,
           'senha': _senhaController.text,
+          'saldoInicial': double.tryParse(_saldoInicialController.text) ?? 0.0,
         }),
       );
 
@@ -78,6 +80,12 @@ class _RegisterPageState extends State<RegisterPage> {
                 obscureText: true,
                 decoration: const InputDecoration(labelText: 'Senha'),
                 validator: (value) => value == null || value.isEmpty ? 'Informe a senha' : null,
+              ),
+              TextFormField(
+                controller: _saldoInicialController,
+                decoration: const InputDecoration(labelText: 'Saldo Inicial'),
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                validator: (value) => value == null || value.isEmpty ? 'Informe o saldo inicial' : null,
               ),
               const SizedBox(height: 20),
               if (_error != null)
