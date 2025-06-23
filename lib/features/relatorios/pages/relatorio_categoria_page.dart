@@ -115,7 +115,7 @@ class _RelatorioPorCategoriaPageState extends State<RelatorioPorCategoriaPage> {
                       PieChartData(
                         sections: somaPorCategoria.entries.toList().asMap().entries.map((entry) {
                           int idx = entry.key;
-                          final categoria = entry.value.key;
+                          //final categoria = entry.value.key;
                           final valor = entry.value.value;
                           final percentual = total > 0 ? (valor / total) * 100 : 0.0;
                           return PieChartSectionData(

@@ -7,7 +7,6 @@ import '../models/usuario_model.dart'; // importe o novo model
 class ApiService {
   static const String baseUrl = 'http://localhost:8080/api';
 
-  // EXISTENTE: Buscar todas as despesas (caso precise em outra tela)
   Future<List<DespesaModel>> getDespesas() async {
     final response = await http.get(Uri.parse('$baseUrl/despesas'));
 
@@ -16,6 +15,17 @@ class ApiService {
       return data.map((json) => DespesaModel.fromJson(json)).toList();
     } else {
       throw Exception('Erro ao carregar despesas');
+    }
+  }
+
+  Future<List<ReceitaModel>> getReceitas() async {
+    final response = await http.get(Uri.parse('$baseUrl/receitas'));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
+      return data.map((json) => ReceitaModel.fromJson(json)).toList();
+    } else {
+      throw Exception('Erro ao carregar receitas');
     }
   }
 
@@ -33,13 +43,13 @@ class ApiService {
   }
 
   Future<void> editarDespesa(DespesaModel despesa) async {
+    final url = Uri.parse('$baseUrl/despesas/${despesa.id}');
     final response = await http.put(
-      Uri.parse('$baseUrl/despesas/${despesa.id}'),
+      url,
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(despesa.toJson()),
     );
-
-    if (response.statusCode != 200) {
+    if (response.statusCode != 200 && response.statusCode != 204) {
       throw Exception('Erro ao editar despesa');
     }
   }
@@ -49,19 +59,6 @@ class ApiService {
   
     if (response.statusCode != 200) {
       throw Exception('Erro ao deletar despesa');
-    }
-  }
-
-
-  // Buscar todas as receitas (caso precise em outra tela)
-  Future<List<ReceitaModel>> getReceitas() async {
-    final response = await http.get(Uri.parse('$baseUrl/receitas'));
-
-    if (response.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
-      return data.map((json) => ReceitaModel.fromJson(json)).toList();
-    } else {
-      throw Exception('Erro ao carregar receitas');
     }
   }
 

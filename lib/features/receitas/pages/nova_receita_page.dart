@@ -59,6 +59,7 @@ class _NovaReceitaPageState extends State<NovaReceitaPage> {
         valor: double.tryParse(valorController.text) ?? 0,
         data: dataFormatada,
         categoria: categorias[categoriaSelecionada] ?? '',
+        usuario: { 'id': 1 },
       );
 
       await api.criarReceita(receita);

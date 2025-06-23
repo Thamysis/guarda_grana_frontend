@@ -84,6 +84,7 @@ class _ListReceitasPageState extends State<ListReceitasPage> {
                         'R\$ ${receita.valor.toStringAsFixed(2)}',
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
+                      /*
                       IconButton(
                         icon: const Icon(Icons.edit, color: Colors.blue),
                         onPressed: () async {
@@ -95,6 +96,7 @@ class _ListReceitasPageState extends State<ListReceitasPage> {
                           setState(_carregarReceitas); 
                         },
                       ),
+                      */
                       IconButton(
                         icon: const Icon(Icons.delete, color: Colors.red),
                         onPressed: () => _confirmarExclusao(receita),

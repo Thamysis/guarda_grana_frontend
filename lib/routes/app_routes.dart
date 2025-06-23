@@ -7,7 +7,7 @@ import '../features/receitas/pages/nova_receita_page.dart';
 import '../features/receitas/pages/editar_receita_page.dart';
 import '../data/models/despesa_model.dart';
 import '../data/models/receita_model.dart';
-import '../features/relatorios/pages/relatorio_anual_page.dart';
+//import '../features/relatorios/pages/relatorio_anual_page.dart';
 
 class AppRoutes {
   static const despesas = '/despesas';
