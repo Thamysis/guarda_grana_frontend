@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../data/services/api_service.dart';
 import '../../../../data/models/receita_model.dart';
+import '../../../core/theme/app_colors.dart';
 
 class ListReceitasPage extends StatefulWidget {
   const ListReceitasPage({super.key});
@@ -12,6 +13,23 @@ class ListReceitasPage extends StatefulWidget {
 class _ListReceitasPageState extends State<ListReceitasPage> {
   final api = ApiService();
   late Future<List<ReceitaModel>> receitas;
+
+  int _selectedIndex = 2;
+
+  void _onItemTapped(int index) {
+    if (index == 0){
+      Navigator.pushNamed(context, '/');
+    }
+    if (index == 1) {
+      Navigator.pushNamed(context, '/despesas');
+    } else if (index == 2) {
+      Navigator.pushNamed(context, '/receitas');
+    }
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
 
   @override
   void initState() {
@@ -109,6 +127,18 @@ class _ListReceitasPageState extends State<ListReceitasPage> {
           }
         },
       ),
+      bottomNavigationBar: BottomNavigationBar(
+              currentIndex: _selectedIndex,
+              onTap: _onItemTapped,
+              selectedItemColor: AppColors.primary,
+              unselectedItemColor: Colors.grey,
+              items: const [
+                BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Início'),
+                //BottomNavigationBarItem(icon: Icon(Icons.account_balance), label: 'Contas'),
+                BottomNavigationBarItem(icon: Icon(Icons.trending_down), label: 'Despesas'),
+                BottomNavigationBarItem(icon: Icon(Icons.trending_up), label: 'Receitas'),
+              ],
+            ),
     );
   }
 }

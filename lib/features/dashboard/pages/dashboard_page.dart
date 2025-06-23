@@ -18,6 +18,9 @@ class _DashboardPageState extends State<DashboardPage> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
+    if (index == 0){
+      Navigator.pushNamed(context, '/');
+    }
     if (index == 1) {
       Navigator.pushNamed(context, '/despesas');
     } else if (index == 2) {
