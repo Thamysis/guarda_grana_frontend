@@ -8,10 +8,7 @@ import '../models/usuario_model.dart';
 class ApiService {
   static const String baseUrl = 'http://localhost:8080/api';
 
-<<<<<<< HEAD
   // Buscar todas as despesas
-=======
->>>>>>> d3ca86553f4b42a27669c4a14d64938c98429461
   Future<List<DespesaModel>> getDespesas() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('auth_token');
@@ -30,22 +27,6 @@ class ApiService {
     }
   }
 
-<<<<<<< HEAD
-  // Criar despesa
-=======
-  Future<List<ReceitaModel>> getReceitas() async {
-    final response = await http.get(Uri.parse('$baseUrl/receitas'));
-
-    if (response.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
-      return data.map((json) => ReceitaModel.fromJson(json)).toList();
-    } else {
-      throw Exception('Erro ao carregar receitas');
-    }
-  }
-
-  // EXISTENTE: Criar despesa
->>>>>>> d3ca86553f4b42a27669c4a14d64938c98429461
   Future<void> criarDespesa(DespesaModel despesa) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('auth_token');
@@ -64,7 +45,6 @@ class ApiService {
   }
 
   Future<void> editarDespesa(DespesaModel despesa) async {
-<<<<<<< HEAD
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('auth_token');
     final response = await http.put(
@@ -73,12 +53,6 @@ class ApiService {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       },
-=======
-    final url = Uri.parse('$baseUrl/despesas/${despesa.id}');
-    final response = await http.put(
-      url,
-      headers: {'Content-Type': 'application/json'},
->>>>>>> d3ca86553f4b42a27669c4a14d64938c98429461
       body: jsonEncode(despesa.toJson()),
     );
     if (response.statusCode != 200 && response.statusCode != 204) {
@@ -101,8 +75,6 @@ class ApiService {
     }
   }
 
-<<<<<<< HEAD
-  // Buscar todas as receitas
   Future<List<ReceitaModel>> getReceitas() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('auth_token');
@@ -120,10 +92,7 @@ class ApiService {
       throw Exception('Erro ao carregar receitas');
     }
   }
-=======
->>>>>>> d3ca86553f4b42a27669c4a14d64938c98429461
 
-  // Criar receita
   Future<void> criarReceita(ReceitaModel receita) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('auth_token');
@@ -141,7 +110,6 @@ class ApiService {
     }
   }
 
-  // Editar receita
   Future<void> editarReceita(ReceitaModel receita) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('auth_token');
@@ -159,7 +127,6 @@ class ApiService {
     }
   }
 
-  // Deletar receita
   Future<void> deletarReceita(int id) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('auth_token');
